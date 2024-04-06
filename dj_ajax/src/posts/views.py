@@ -29,5 +29,23 @@ def load_post_data_view(request, num_posts):
         data.append(item)
     return JsonResponse({'data':data[lower:upper], 'size': size})
 
+def like_unlike_post(request):
+     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        pk = request.POST.get('pk')
+        try:
+            obj = Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            return JsonResponse({'error': 'Post not found'}, status=404)
+        if pk is None:
+            return JsonResponse({'error': 'Invalid post ID'}, status=400)
+        if request.user in obj.liked.all():
+            liked = False
+            obj.liked.remove(request.user)
+        else:
+            liked = True
+            obj.liked.add(request.user)
+        return JsonResponse({'liked': liked, 'count': obj.like_count})
+
+
 def hello_world_view(request):
     return JsonResponse({'text': 'Hello World!'}) 
