@@ -1,3 +1,4 @@
+const postBox = document.getElementById('post-box');
 const backBtn = document.getElementById('back-btn');
 const updatBtn = document.getElementById('update-btn');
 const deleteBtn = document.getElementById('delete-btn');
@@ -14,13 +15,27 @@ $.ajax({
     success: function(response)
     {
         console.log(response)
-        spinnerBox.classList.add('not-visible')
+     
         const data = response.data
 
         if (data.logged_in === data.author) {
             updatBtn.classList.remove('not-visible')
             deleteBtn.classList.remove('not-visible')
         }
+
+        const titleEl = document.createElement('h3')
+        titleEl.setAttribute('class', 'mt-1')
+
+        const bodyEl = document.createElement('p')
+        bodyEl.setAttribute('class', 'mt-1')
+
+        titleEl.textContent = data.title
+        bodyEl.textContent = data.body
+
+        postBox.appendChild(titleEl)
+        postBox.appendChild(bodyEl)
+
+        spinnerBox.classList.add('not-visible')
         // response.forEach(el => {
         //     document.getElementById('posts').innerHTML += `
         //         <div class="card mt-3">
