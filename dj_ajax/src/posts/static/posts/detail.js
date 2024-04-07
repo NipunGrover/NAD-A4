@@ -8,6 +8,16 @@ const spinnerBox = document.getElementById('spinner-box')
 const titleInput = document.getElementById('id_title')
 const bodyInput = document.getElementById('id_body')
 
+const updateUrl = window.location.href + "update/"
+const deleteUrl = window.location.href + "delete/"
+
+const updateForm = document.getElementById('update-form')
+const deleteForm = document.getElementById('delete-form')
+
+const csrf = document.getElementsByName('csrfmiddlewaretoken')
+const alertBox = document.getElementById('alert-box')  
+
+
 backBtn.addEventListener('click', () => {
     history.back();
 })
@@ -28,9 +38,11 @@ $.ajax({
 
         const titleEl = document.createElement('h3')
         titleEl.setAttribute('class', 'mt-1')
+        titleEl.setAttribute('id', 'title')
 
         const bodyEl = document.createElement('p')
         bodyEl.setAttribute('class', 'mt-1')
+        bodyEl.setAttribute('id', 'body')
 
         titleEl.textContent = data.title
         bodyEl.textContent = data.body
@@ -61,3 +73,33 @@ $.ajax({
     }
 })
 
+
+updateForm.addEventListener('submit', (e) => {
+    e.preventDefault()
+
+    const title = document.getElementById('title')
+    const body = document.getElementById('body')
+
+
+    $.ajax({
+        type: 'POST',   
+        url: updateUrl,
+        data: {
+            'csrfmiddlewaretoken': csrf[0].value,
+            'title': titleInput.value,
+            'body': bodyInput.value
+        },
+        success: function(response)
+        {
+            console.log(response)
+            handleAlerts('success', 'Post updated successfully')
+            title.textContent = response.title 
+            body.textContent = response.body
+        },
+        error: function(error)
+        {
+            console.log(error)
+        }
+
+    })
+})
